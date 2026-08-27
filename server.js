@@ -25,15 +25,14 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(fileUpload({
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   abortOnLimit: true,
 }));
 
-// Statik fayllar (index.html)
+// Statik fayllar
 app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Foydalanuvchi bot komandalari ---
-
 userBot.start((ctx) => {
   const keyboard = Markup.inlineKeyboard([
     [Markup.button.webApp('📝 Ariza topshirish', WEBAPP_URL)],
@@ -49,7 +48,6 @@ userBot.action('about', (ctx) => {
 });
 
 // --- Admin bot tugmalari ---
-
 adminBot.action(/^accept:(.+)/, async (ctx) => {
   const userId = ctx.match[1];
   try {
@@ -57,7 +55,6 @@ adminBot.action(/^accept:(.+)/, async (ctx) => {
   } catch (err) {
     console.error('Foydalanuvchiga xabar yuborishda xato:', err);
   }
-  // Xabarni yangilash
   const newCaption = ctx.callbackQuery.message.caption + '\n\n✅ <b>QABUL QILINDI</b>';
   await ctx.editMessageCaption(newCaption, { parse_mode: 'HTML' });
   await ctx.answerCbQuery('Qabul qilindi');
@@ -76,13 +73,11 @@ adminBot.action(/^reject:(.+)/, async (ctx) => {
 });
 
 // --- Mini App formani qabul qilish ---
-
 app.post('/submit', async (req, res) => {
   try {
     const { user_id, ism, familiya, yosh, manzil, vazn } = req.body;
     const imageFile = req.files && req.files.image;
 
-    // Validatsiya
     if (!user_id || !ism || !familiya || !yosh || !manzil || !vazn || !imageFile) {
       return res.status(400).json({ status: 'error', message: 'Barcha maydonlarni to\'ldiring!' });
     }
@@ -92,11 +87,9 @@ app.post('/submit', async (req, res) => {
       return res.status(400).json({ status: 'error', message: 'Noto\'g\'ri foydalanuvchi ID' });
     }
 
-    // Rasm ma'lumotlari
     const imageBuffer = imageFile.data;
     const imageName = imageFile.name || 'photo.jpg';
 
-    // Admin botga yuboriladigan caption
     const caption = `📄 <b>Yangi ariza</b>\n\n` +
       `👤 <b>Ism:</b> ${ism}\n` +
       `👥 <b>Familiya:</b> ${familiya}\n` +
@@ -112,7 +105,6 @@ app.post('/submit', async (req, res) => {
       ],
     ]);
 
-    // Rasm va captionni admin chatga yuborish
     await adminBot.telegram.sendPhoto(
       ADMIN_CHAT_ID,
       { source: imageBuffer, filename: imageName },
@@ -130,21 +122,18 @@ app.post('/submit', async (req, res) => {
   }
 });
 
-// --- Serverni ishga tushirish ---
-
+// --- Serverni ishga tushirish (TUZATILGAN) ---
 async function start() {
   try {
-    // Botlarni polling rejimida ishga tushirish
-    await Promise.all([
-      userBot.launch(),
-      adminBot.launch(),
-    ]);
-    console.log('Botlar ishga tushdi');
-
-    // Express serverni boshlash
+    // 1. Avval Express serverni boshlaymiz
     app.listen(PORT, () => {
       console.log(`Veb-server ${PORT} portda ishlamoqda`);
     });
+
+    // 2. Keyin botlarni polling rejimida boshlaymiz (await ishlatmasdan)
+    userBot.launch();
+    adminBot.launch();
+    console.log('Botlar ishga tushdi');
   } catch (err) {
     console.error('Ishga tushirishda xato:', err);
     process.exit(1);
