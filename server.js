@@ -42,7 +42,7 @@ userBot.start((ctx) => {
 });
 
 userBot.action('about', (ctx) => {
-  const text = `🏢 <b>Biz haqimizda</b>\n\nAssalomualaykum bizning JASUR CLUB sport jamiyatiga xush kelibsiz biz 2015-yilda beri faoliyat olib bormoqdamiz.JASUR CLUB sport jamiyat asoschis Iskandarov Jasurbek.Murabiylar Jsurbek,Suxrobjon,Gulasalxon. .`;
+  const text = `🏢 <b>Biz haqimizda</b>\n\nAssalomualaykum bizning JASUR CLUB sport jamiyatiga xush kelibsiz biz 2015-yilda beri faoliyat olib bormoqdamiz.JASUR CLUB sport jamiyat asoschis Iskandarov Jasurbek.Murabiylar Jasurbek,Suxrobjon,Gulasalxon. .`;
   ctx.replyWithHTML(text);
   ctx.answerCbQuery();
 });
