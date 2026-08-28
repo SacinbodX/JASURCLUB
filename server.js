@@ -42,7 +42,7 @@ userBot.start((ctx) => {
 });
 
 userBot.action('about', (ctx) => {
-  const text = `🏢 <b>Biz haqimizda</b>\n\nBizning kompaniyamiz 2010-yildan beri xizmat ko'rsatib kelmoqda. Sifat va ishonchlilik bizning ustuvor yo'nalishimizdir.`;
+  const text = `🏢 <b>Biz haqimizda</b>\n\nAssalomualaykum bizning JASUR CLUB sport jamiyatiga xush kelibsiz biz 2015-yilda beri faoliyat olib bormoqdamiz.JASUR CLUB sport jamiyat asoschis Iskandarov Jasurbek.Murabiylar Jsurbek,Suxrobjon,Gulasalxon. .`;
   ctx.replyWithHTML(text);
   ctx.answerCbQuery();
 });
@@ -63,7 +63,7 @@ adminBot.action(/^accept:(.+)/, async (ctx) => {
 adminBot.action(/^reject:(.+)/, async (ctx) => {
   const userId = ctx.match[1];
   try {
-    await userBot.telegram.sendMessage(userId, '❌ Sizning arizangiz rad etildi.');
+    await userBot.telegram.sendMessage(userId, '❌ Sizning arizangiz rad etildi.Sababi xozirda bo\'sh o\'rin mavjud emas .');
   } catch (err) {
     console.error('Foydalanuvchiga xabar yuborishda xato:', err);
   }
