@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JASUR CLUB</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#101010;--yellow:#ffc21a;--red:#d7263d;--sky:#2da8ff;--paper:#fff8e6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--black);color:var(--paper);font:500 16px/1.6 Nunito,sans-serif;padding-bottom:84px}
+h1,h2,h3{font-family:'Russo One',sans-serif;font-weight:400;margin:0;line-height:1.1}
+.belt{height:10px;background:linear-gradient(90deg,var(--red) 0 33%,var(--yellow) 33% 66%,var(--sky) 66%)}
+.view{display:none}.view.on{display:block}
+.hero{padding:44px 22px 36px;background:
+ linear-gradient(160deg,transparent 60%,var(--red) 60.2%),
+ radial-gradient(circle at 85% 12%,var(--yellow) 0 70px,transparent 71px),var(--black)}
+.hero h1{font-size:46px;color:var(--yellow);text-shadow:4px 4px 0 var(--red);max-width:300px}
+.hero p{max-width:300px;margin:14px 0 0}
+.sec{padding:26px 20px}
+.sec h2{font-size:26px;color:var(--yellow);margin-bottom:14px}
+.card{background:#1d1d1d;border-left:6px solid var(--sky);padding:16px;margin-bottom:14px;border-radius:4px 16px 16px 4px}
+.card:nth-child(3n+2){border-color:var(--red)}.card:nth-child(3n){border-color:var(--yellow)}
+.gal{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}
+.gal img{height:190px;border-radius:14px;scroll-snap-align:start;flex:none;border:3px solid var(--yellow)}
+.tr{display:flex;gap:14px}
+.tr>img{width:92px;height:120px;object-fit:cover;border-radius:12px;flex:none;border:3px solid var(--paper)}
+.tr h3{font-size:20px;color:var(--paper)}.tr small{color:var(--sky);font-weight:700}
+.tr .more{display:flex;gap:6px;margin-top:8px;overflow-x:auto}
+.tr .more img{width:46px;height:46px;object-fit:cover;border-radius:8px}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:15px;font:400 18px 'Russo One',sans-serif;
+ background:var(--yellow);color:var(--black);box-shadow:0 5px 0 #b88a00;cursor:pointer;margin-top:14px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #b88a00}
+.btn.red{background:var(--red);color:#fff;box-shadow:0 5px 0 #8e1527}
+.btn.sky{background:var(--sky);color:var(--black);box-shadow:0 5px 0 #146aa8}
+.btn:disabled{opacity:.6}
+label{display:block;margin:14px 0 4px;color:var(--yellow);font-weight:700}
+input{width:100%;padding:12px;border-radius:10px;border:2px solid #333;background:#1d1d1d;color:var(--paper);font:inherit}
+input:focus{outline:3px solid var(--sky);border-color:var(--sky)}
+.grp{border:2px dashed var(--red);border-radius:16px;padding:4px 14px 16px;margin-top:20px}
+.grp legend{padding:0 8px;color:var(--red);font:400 18px 'Russo One'}
+.scan{width:220px;height:220px;margin:14px auto 0;border-radius:50%;position:relative;background:#222;overflow:hidden;border:5px solid var(--sky);display:none}
+.scan video,.scan img{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.scan img{transform:none}
+.scan.on{display:block}
+.scan.go::after{content:"";position:absolute;left:0;right:0;height:5px;background:var(--yellow);box-shadow:0 0 14px var(--yellow);animation:sw 1.2s linear infinite}
+@keyframes sw{from{top:0}to{top:100%}}
+.msg{margin-top:12px;font-weight:700;text-align:center}.msg.e{color:#ff6b7d}.msg.s{color:#58e08a}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--black);border-top:4px solid var(--yellow);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;background:none;border:0;color:var(--paper);padding:14px 4px;font:400 14px 'Russo One'}
+nav button.on{background:var(--yellow);color:var(--black)}
+@media(prefers-reduced-motion:reduce){.scan.go::after{animation:none}}
+</style>
+</head>
+<body>
+<div class="belt"></div>
+
+<section class="view on" id="v-home">
+ <div class="hero"><h1>JASUR CLUB</h1><p>Kurash zali. 2015-yildan beri yosh polvonlarni tarbiyalaymiz.</p>
+  <button class="btn red" style="max-width:260px" onclick="go('reg')">Ro'yxatdan o'tish</button></div>
+ <div class="belt"></div>
+ <div class="sec"><h2>Zal haqida</h2><div class="card" id="about">Yuklanmoqda…</div></div>
+ <div class="sec" id="galSec" style="padding-top:0"><h2>Zalimiz</h2><div class="gal" id="gal"></div></div>
+</section>
+
+<section class="view" id="v-trn"><div class="sec"><h2>Murabbiylar</h2><div id="trn"></div></div></section>
+
+<section class="view" id="v-reg"><div class="sec"><h2>Ro'yxatdan o'tish</h2>
+ <form id="f" novalidate>
+  <input type="hidden" name="user_id" id="uid">
+  <fieldset class="grp"><legend>Bola ma'lumoti</legend>
+   <label>Ism</label><input name="ism" required>
+   <label>Familiya</label><input name="familiya" required>
+   <label>Yosh</label><input name="yosh" type="number" min="1" max="120" required>
+   <label>Manzil</label><input name="manzil" required>
+   <label>Vazn (kg)</label><input name="vazn" type="number" step="0.1" min="1" required>
+   <label>Bola rasmi</label><input name="image" type="file" accept="image/*" required>
+  </fieldset>
+  <fieldset class="grp"><legend>Ota yoki ona</legend>
+   <label>Ismi</label><input name="ota_ism" required>
+   <label>Familiyasi</label><input name="ota_familiya" required>
+   <div class="scan" id="scan"><video id="vid" autoplay playsinline muted></video><img id="shot" hidden alt="Yuz skaneri natijasi"></div>
+   <button type="button" class="btn sky" id="camBtn">Yuzni skanerlash</button>
+   <div class="msg" id="faceMsg"></div>
+  </fieldset>
+  <button type="submit" class="btn" id="send">Arizani yuborish</button>
+ </form>
+ <div class="msg" id="msg"></div></div></section>
+
+<nav><button class="on" data-v="home">Bosh sahifa</button><button data-v="trn">Murabbiylar</button><button data-v="reg">Ariza</button></nav>
+
+<script>
+const tg=Telegram.WebApp;tg.ready();tg.expand();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function go(v){document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));
+ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));scrollTo(0,0)}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+
+fetch('/api/data').then(r=>r.json()).then(d=>{
+ $('about').textContent=d.about;
+ $('galSec').style.display=d.photos.length?'':'none';
+ $('gal').innerHTML=d.photos.map(p=>`<img src="${esc(p)}" alt="Zal rasmi" loading="lazy">`).join('');
+ $('trn').innerHTML=d.trainers.length?d.trainers.map(t=>`<div class="card tr">
+  <img src="${esc(t.photos[0]||'')}" alt="${esc(t.name)}"><div><h3>${esc(t.name)}</h3><small>${esc(t.age)} yosh</small>
+  <p style="margin:6px 0 0">${esc(t.desc)}</p>
+  ${t.photos.length>1?'<div class="more">'+t.photos.slice(1).map(p=>`<img src="${esc(p)}" alt="">`).join('')+'</div>':''}</div></div>`).join('')
+  :'<div class="card">Murabbiylar tez orada qo\'shiladi.</div>';
+}).catch(()=>$('about').textContent='Ma\'lumotni yuklab bo\'lmadi');
+
+const u=tg.initDataUnsafe&&tg.initDataUnsafe.user;
+if(u)$('uid').value=u.id;else $('msg').innerHTML='<span class="e">Foydalanuvchi aniqlanmadi. Ilovani bot orqali oching.</span>';
+
+// ---- Yuz skaneri ----
+let stream=null,faceBlob=null;
+$('camBtn').onclick=async()=>{
+ const sc=$('scan'),v=$('vid'),fm=$('faceMsg');
+ if(!stream){
+  try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:false})}
+  catch{fm.className='msg e';fm.textContent="Kameraga ruxsat berilmadi. Sozlamalardan ruxsat bering.";return}
+  v.srcObject=stream;$('shot').hidden=true;v.hidden=false;faceBlob=null;sc.classList.add('on');
+  $('camBtn').textContent='Yuzni doira ichiga joylab, ezing';fm.textContent='';return}
+ sc.classList.add('go');$('camBtn').disabled=true;fm.className='msg';fm.textContent='Skanerlanmoqda…';
+ await new Promise(r=>setTimeout(r,1800));
+ const c=document.createElement('canvas'),s=Math.min(v.videoWidth,v.videoHeight);c.width=c.height=480;
+ const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,480,480);
+ x.save();x.beginPath();x.arc(240,240,240,0,7);x.clip();x.translate(480,0);x.scale(-1,1);
+ x.drawImage(v,(v.videoWidth-s)/2,(v.videoHeight-s)/2,s,s,0,0,480,480);x.restore();
+ c.toBlob(b=>{faceBlob=b;$('shot').src=URL.createObjectURL(b);$('shot').hidden=false;v.hidden=true;
+  stream.getTracks().forEach(t=>t.stop());stream=null;sc.classList.remove('go');
+  $('camBtn').disabled=false;$('camBtn').textContent='Qayta skanerlash';
+  fm.className='msg s';fm.textContent='Yuz skanerlandi ✓'},'image/jpeg',.85)};
+
+// ---- Yuborish: 1-bosish serverga, 5 soniya, 2-bosish adminga ----
+let token=null,busy=false;
+$('f').addEventListener('submit',async e=>{
+ e.preventDefault();const btn=$('send'),m=$('msg');
+ if(busy)return;
+ if(token){busy=true;btn.disabled=true;
+  try{const r=await fetch('/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+   const j=await r.json();
+   if(r.ok){m.className='msg s';m.textContent='Ariza yuborildi! Javobni bot orqali olasiz.';e.target.reset();token=null;faceBlob=null;
+    $('shot').hidden=true;$('scan').classList.remove('on');btn.textContent='Arizani yuborish'}
+   else{m.className='msg e';m.textContent=j.message;token=null;btn.textContent='Arizani yuborish'}
+  }catch{m.className='msg e';m.textContent="Server bilan bog'lanib bo'lmadi"}
+  busy=false;btn.disabled=false;return}
+ const f=e.target;m.className='msg e';
+ if(!$('uid').value){m.textContent='Foydalanuvchi aniqlanmadi.';return}
+ for(const i of f.querySelectorAll('input:not([type=hidden])'))if(!i.value.trim()){m.textContent="Barcha maydonlarni to'ldiring!";i.focus();return}
+ if(!faceBlob){m.textContent='Ota yoki ona yuzini skanerlang!';return}
+ const fd=new FormData(f);fd.append('face',faceBlob,'face.jpg');
+ busy=true;btn.disabled=true;m.textContent='';
+ const req=fetch('/prepare',{method:'POST',body:fd}).then(r=>r.json()).catch(()=>({status:'error',message:"Server bilan bog'lanib bo'lmadi"}));
+ let n=5;btn.textContent=`Iltimos, ${n} soniya kuting`;
+ await new Promise(r=>{const t=setInterval(()=>{n--;if(n<=0){clearInterval(t);r()}else btn.textContent=`Iltimos, ${n} soniya kuting`},1000)});
+ const j=await req;busy=false;btn.disabled=false;
+ if(j.status==='success'){token=j.token;btn.textContent='Endi yuborish uchun ezing';btn.classList.add('red')}
+ else{m.textContent=j.message;btn.textContent='Arizani yuborish'}
+});
+</script>
+</body>
+</html>
